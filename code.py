@@ -24,7 +24,7 @@ for i in range(N):
 
 e=np.array(Distance["EARLIEST TIME"])#earliest service time start time of customer i.
 l=np.array(Distance["LATEST TIME"])#: latest service start time of customer i.
-Pmax=0.7
+Pmax=0
 Ce=[1.2,1.2,1.2,1.2,1.2,1.2,1.2,1.2,1.2,1.2,
     1.2,1.2,1.2,1.2,1.2,1.2,1.2,1.2,1.2,1.2]#the unit penalty for the service that begins before its earliest start time
 Cl=[1.2,1.2,1.2,1.2,1.2,1.2,1.2,1.2,1.2,1.2,
@@ -62,11 +62,14 @@ model.setObjective(gp.quicksum(ccost*d[i][j]*x[i,j,k] for i in range(0,N) for j 
                   gp.quicksum(Ce[i]*deltai[i]+Cl[i]*deltal[i] for i in range(1,N)) ,GRB.MINIMIZE)
 model.write("NAFTAL.lp")
 model.optimize()
-
-for i range(N):
-    for j range(N):
-        for k range(K):
+result=[]
+for i in range(N):
+    for j in range(N):
+        for k in range(K):
             if x[i,j,k].x> 0:
-                print(f"\n  {x[i,j,k]} ."),
+             dictt={"node i":i,'node j':j,"Vehicle":k+1,"EARLIEST TIME":e[j],"LATEST TIME":l[j],"start time":s[j].x}
+             result.append(dictt)
+result=pd.DataFrame(result)
+result.to_excel("result.xlsx")
 obj = model.getObjective()
 print(obj.getValue())
